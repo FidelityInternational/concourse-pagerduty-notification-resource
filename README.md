@@ -40,6 +40,9 @@ Send alert to pagerduty, with the configured parameters.
 Required:
 - `description`: Static text of alert to send
 
+Optional:
+- `incident_key`: Provides an incident key that can be used to dedupe alerts
+
 Example
 -------
 

@@ -6,20 +6,29 @@ set -e
 # for jq
 PATH=/usr/local/bin:$PATH
 
-payload=`cat`
+payload=$(cat)
 
-service_key=$(echo $payload | jq -r '.source.service_key // ""')
-description=$(echo $payload | jq -r '.params.description // ""')
-response=`curl -s \
+service_key=$(echo "$payload" | jq -r '.source.service_key // ""')
+description=$(echo "$payload" | jq -r '.params.description // ""')
+param_incident_key=$(echo "$payload" | jq -r '.params.incident_key // ""')
+if [ "$service_key" = "" ]; then
+  echo 'service_key must be set on source'
+  exit 1
+fi
+if [ "$description" = "" ]; then
+  echo 'description must be set on params'
+  exit 1
+fi
+response=$(curl -s \
   -H 'Accept: */*' \
   -H 'Content-Type: application/json' \
   -X POST \
-  --data-binary "{\"service_key\": \"${service_key}\",\"event_type\": \"trigger\",\"description\": \"${description}\",\"client\": \"concourse\",\"details\": {}, \"contexts\": []}" \
-  "https://events.pagerduty.com/generic/2010-04-15/create_event.json"`
+  --data-binary "{\"service_key\": \"${service_key}\",\"event_type\": \"trigger\",\"description\": \"${description}\",\"incident_key\": \"${param_incident_key}\",\"client\": \"concourse\",\"details\": {}, \"contexts\": []}" \
+  "https://events.pagerduty.com/generic/2010-04-15/create_event.json")
 
 
-status=$(echo $response | jq -r '.status // ""')
-incident_key=$(echo $response | jq -r '.incident_key // ""')
+status=$(echo "$response" | jq -r '.status // ""')
+incident_key=$(echo "$response" | jq -r '.incident_key // ""')
 
 if [ "$status" != "success" ]; then
   echo "Alerting to pagerduty failed"
