@@ -1,0 +1,29 @@
+#!/bin/sh
+# vim: set ft=sh
+
+set -e
+
+# for jq
+PATH=/usr/local/bin:$PATH
+
+payload=`cat`
+
+service_key=$(echo $payload | jq -r '.source.service_key // ""')
+description=$(echo $payload | jq -r '.params.description // ""')
+response=`curl -s \
+  -H 'Accept: */*' \
+  -H 'Content-Type: application/json' \
+  -X POST \
+  --data-binary "{\"service_key\": \"${service_key}\",\"event_type\": \"trigger\",\"description\": \"${description}\",\"client\": \"concourse\",\"details\": {}, \"contexts\": []}" \
+  "https://events.pagerduty.com/generic/2010-04-15/create_event.json"`
+
+
+status=$(echo $response | jq -r '.status // ""')
+incident_key=$(echo $response | jq -r '.incident_key // ""')
+
+if [ "$status" != "success" ]; then
+  echo "Alerting to pagerduty failed"
+  exit 1
+fi
+
+echo "{\"version\": {\"ref\": \"${incident_key}\"},\"metadata\":[${response}]}"
