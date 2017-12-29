@@ -1,0 +1,4 @@
+---
+commands:
+  in: "true" # Required as is called after each put
+  out: /opt/resource/pd_notification.sh

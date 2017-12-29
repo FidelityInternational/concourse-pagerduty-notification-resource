@@ -1,8 +1,10 @@
-FROM alpine:3.3
+FROM redfactorlabs/concourse-smuggler-resource:alpine
 
-ENV PACKAGES "curl openssl ca-certificates jq"
-
+ENV PACKAGES "curl openssl ca-certificates jq python py-pip"
 RUN apk add --update $PACKAGES && rm -rf /var/cache/apk/*
 
 COPY assets/ /opt/resource/
+
+RUN pip install -r requirements.txt
+
 RUN chmod +x /opt/resource/*
