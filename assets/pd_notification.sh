@@ -4,16 +4,25 @@ set -ue
 # for jq
 PATH=/usr/local/bin:$PATH
 
-if [ "$SMUGGLER_pd_service_key" = "" ]; then
+if [ "${SMUGGLER_pd_service_key}" = "" ]; then
   echo 'pd_service_key must be set on source'
   exit 1
 fi
-if [ "$SMUGGLER_description" = "" ]; then
+if [ "${SMUGGLER_description}" = "" ]; then
   echo 'description must be set on params'
   exit 1
 fi
 
-error_context="$(python /opt/resource/pd_error_capture.py ${SMUGGLER_atc_external_url} ${SMUGGLER_atc_username} ${SMUGGLER_atc_password} ${BUILD_ID})"
+SMUGGLER_atc_external_url=${SMUGGLER_atc_external_url:-${ATC_EXTERNAL_URL}}
+error_context="No error context possible without valid ATC url and credentials."
+if [ "${SMUGGLER_atc_external_url:-}" != "" ] && [ "${SMUGGLER_atc_username:-}" != "" ] && [ "${SMUGGLER_atc_password:-}" != "" ]; then
+    error_context="$(python /opt/resource/pd_error_capture.py \
+    ${SMUGGLER_atc_external_url} \
+    ${SMUGGLER_atc_username} \
+    ${SMUGGLER_atc_password} \
+    ${BUILD_ID})"
+fi
+
 concourse_build_url="${SMUGGLER_atc_external_url}/builds/${BUILD_ID}"
 
 data="$(
