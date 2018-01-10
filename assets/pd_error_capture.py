@@ -64,19 +64,33 @@ client = sseclient.SSEClient(response)
 
 logs = {}
 
-output = ""
-for event in client.events():
-    if event.event == 'end':
-      break
+# Output something to identify the resource stream and then ignore it
+resourceTaskId = None
+sys.stderr.write("EventReaderWaterMark: Retrieving event log from concourse\n")
 
-    edata = json.loads(event.data)
+try:
+    output = ""
+    for event in client.events():
+        if event.event == 'end':
+          break
 
-    if edata['event'] == "finish-task" and edata['data']['exit_status'] == 0:
-      taskId = edata['data']['origin']['id']
-      logs.pop(taskId, None)
+        edata = json.loads(event.data)
 
-    if edata['event'] == "log":
-      taskId = edata['data']['origin']['id']
-      logs[taskId] = logs.get(taskId, "") + edata['data']['payload']
+        if edata['event'] == "finish-task" and edata['data']['exit_status'] == 0:
+          taskId = edata['data']['origin']['id']
+          logs.pop(taskId, None)
+
+        if edata['event'] == "log":
+          taskId = edata['data']['origin']['id']
+          logs[taskId] = logs.get(taskId, "") + edata['data']['payload']
+          if edata['data']['payload'].startswith("EventReaderWaterMark:"):
+              resourceTaskId = taskId
+              break
+
+except urllib3.exceptions.ReadTimeoutError as e:
+    pass
+
+if resourceTaskId:
+   logs.pop(resourceTaskId, None)
 
 print "\n".join("\n--------------\n".join([task_map[k], v]) for k,v in logs.items())
