@@ -24,6 +24,7 @@ jq -n \
   --arg output "${error_context}" \
   --arg concourse_build_url "${concourse_build_url}" \
   --arg pipeline_name "${BUILD_PIPELINE_NAME}" \
+  --arg job_name "${BUILD_JOB_NAME}" \
   '
     {
       "event_type": "trigger",
@@ -33,9 +34,10 @@ jq -n \
       "client": "concourse",
       "client_url": $concourse_build_url,
       "details": {
-        "output": $output,
+        "pipeline": $pipeline_name,
+        "job_name": $job_name,
         "concourse_build_url": $concourse_build_url,
-        "pipeline": $pipeline_name
+        "output": $output
       },
       "contexts": []
     }
