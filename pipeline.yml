@@ -1,0 +1,61 @@
+---
+resource_types:
+- name: pagerduty-notification-resource
+  type: docker-image
+  source:
+    repository: paasmule/pagerduty-notification-resource
+    tag: latest
+
+resources:
+- name: pagerduty-notify
+  type: pagerduty-notification-resource
+  source:
+    atc_external_url:
+    atc_username:
+    atc_password: 
+    pd_service_key:
+
+jobs:
+- name: monitoring-test
+  serial: true
+  build_logs_to_retain: 20
+  plan:
+  - do:
+    - task: successful-job
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: paasmule/curl-ssl-jq
+        run:
+          path: bash
+          args:
+          - -exc
+          - -o
+          - pipefail
+          - |
+            find /lib | tail -n 100
+    - task: failing-job
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source:
+            repository: paasmule/curl-ssl-jq
+        run:
+          path: bash
+          args:
+          - -exc
+          - -o
+          - pipefail
+          - |
+            echo "HoHoHo"
+            sleep 5
+            ls dasfsd
+            false
+      on_failure:
+        put: pagerduty-notify
+        params:
+          description: something bwoke
+    timeout: 5m
