@@ -19,7 +19,7 @@ resource_types:
 Source Configuration
 --------------------
 
-- `pd_service_key`: *Required*. The GUID of one of your "Generic API" services. This is the "Integration Key" listed on a Generic API's service detail page.
+- `service_key`: *Required*. The GUID of one of your "Generic API" services. This is the "Integration Key" listed on a Generic API's service detail page.
 
 The following fields are required if you want to see erroring Concourse task output in the Pagerduty notification:
 
@@ -37,7 +37,7 @@ resources:
     atc_external_url: ...
     atc_username: ...
     atc_password: ...
-    pd_service_key: ...
+    service_key: ...
 ```
 
 Behaviour

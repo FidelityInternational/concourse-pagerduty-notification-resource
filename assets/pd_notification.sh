@@ -4,8 +4,8 @@ set -ue
 # for jq
 PATH=/usr/local/bin:$PATH
 
-if [ "${SMUGGLER_pd_service_key}" = "" ]; then
-  echo 'pd_service_key must be set on source'
+if [ "${SMUGGLER_service_key}" = "" ]; then
+  echo 'service_key must be set on source'
   exit 1
 fi
 if [ "${SMUGGLER_description}" = "" ]; then
@@ -28,7 +28,7 @@ concourse_build_url="${SMUGGLER_atc_external_url}/builds/${BUILD_ID}"
 data="$(
 jq -n \
   --arg description "${SMUGGLER_description}" \
-  --arg service_key "${SMUGGLER_pd_service_key}" \
+  --arg service_key "${SMUGGLER_service_key}" \
   --arg incident_key "${BUILD_PIPELINE_NAME}/${BUILD_JOB_NAME}" \
   --arg output "${error_context}" \
   --arg concourse_build_url "${concourse_build_url}" \
@@ -68,4 +68,4 @@ if [ "$status" != "success" ]; then
   exit 1
 fi
 
-echo "{\"version\": {\"ref\": \"${SMUGGLER_pd_service_key}\"},\"metadata\":[${response}]}"
+echo "{\"version\": {\"ref\": \"${SMUGGLER_service_key}\"},\"metadata\":[${response}]}"
