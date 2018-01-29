@@ -12,8 +12,8 @@ resources:
   source:
     atc_external_url:
     atc_username:
-    atc_password: 
-    pd_service_key:
+    atc_password:
+    service_key:
 
 jobs:
 - name: monitoring-test
