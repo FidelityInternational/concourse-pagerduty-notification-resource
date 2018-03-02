@@ -53,7 +53,8 @@ Required:
 - `description`: Static text of alert to send
 
 Optional:
-- `incident_key`: Provides an incident key that can be used to dedupe alerts
+- `incident_key`: Provides an incident key that can be used to dedupe alerts. Defaults to `<pipeline-name>/<job-name
+- `action`: Specifies whether to `trigger`, `resolve`, or `acknowledge` an insident. Defaults to `trigger`
 
 Example
 -------
