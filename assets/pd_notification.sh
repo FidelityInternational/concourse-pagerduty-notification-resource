@@ -70,7 +70,6 @@ response=$(curl -s \
   "https://events.pagerduty.com/generic/2010-04-15/create_event.json")
 
 status=$(echo "$response" | jq -r '.status // ""')
-incident_key=$(echo "$response" | jq -r '.incident_key // ""')
 if [ "$status" != "success" ]; then
   echo "Alerting to pagerduty failed" >&2
   echo $response >&2
