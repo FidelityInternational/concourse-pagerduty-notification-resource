@@ -77,4 +77,4 @@ if [ "$status" != "success" ]; then
   exit 1
 fi
 
-echo "{\"version\": {\"ref\": \"${SMUGGLER_service_key}\"},\"metadata\":[${response}]}"
+echo "{\"version\": {\"ref\": \"${SMUGGLER_incident_key}\"},\"metadata\":[${response}]}"
