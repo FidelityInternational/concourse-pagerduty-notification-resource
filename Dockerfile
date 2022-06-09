@@ -1,7 +1,7 @@
 FROM redfactorlabs/concourse-smuggler-resource:alpine 
-FROM alpine:3.16
+FROM alpine:3.14
 
-ENV PACKAGES "curl openssl ca-certificates jq python3.9 py-pip"
+ENV PACKAGES "curl openssl ca-certificates jq python3 py-pip"
 RUN apk add --update $PACKAGES && rm -rf /var/cache/apk/*
 
 COPY assets/ /opt/resource/
