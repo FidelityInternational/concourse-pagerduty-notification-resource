@@ -11,6 +11,7 @@ RUN ln /opt/resource/smuggler /opt/resource/check \
 
 ENV PACKAGES "bash curl openssl openssl-dev ca-certificates jq python3 py-pip"
 RUN apk add --update $PACKAGES && rm -rf /var/cache/apk/*
+RUN apk upgrade
 
 RUN pip install -r /opt/resource/requirements.txt
 
